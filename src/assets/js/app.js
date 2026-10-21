@@ -222,16 +222,24 @@ function figure(text) {
 }
 function updateStepStatus() {
   const r = state.result;
+  // Where the bake stopped: at a breakpoint, or the next step while stepping through.
+  const stopAt = r?.pausedAt ?? (state.stepPos != null && state.stepPos < state.steps.length ? state.stepPos : null);
   stepsEl.querySelectorAll('.step').forEach((li, i) => {
     const s = state.steps[i];
     const res = li.querySelector('.res');
     li.classList.toggle('err', r?.error?.index === i);
+    li.classList.toggle('pending', stopAt != null && i >= stopAt);
+    li.querySelector('.bp')?.remove();
+    if (i === stopAt) {
+      li.prepend(el('div', { class: 'bp', role: 'status' }, icon('pause'),
+        el('span', { text: r?.pausedAt === i ? 'Bake stops here' : 'Next step' }),
+        el('button', { class: 'btn sm line', type: 'button', 'data-act': 'step-next', text: 'Step' }),
+        el('button', { class: 'btn sm line', type: 'button', 'data-act': 'run-all', text: 'Run all' })));
+    }
     let text = '', tone = '';
     if (r?.error?.index === i) { text = r.error.message; tone = 'bad'; }
-    else if (r?.pausedAt === i) { text = 'Paused here'; tone = 'warn'; }
-    else if (state.stepPos != null && i === state.stepPos && i < state.steps.length) { text = 'Next'; tone = 'next'; }
     else if (s.off) text = 'Skipped';
-    else if (r?.notes?.[i]) text = r.notes[i];
+    else if (stopAt == null || i < stopAt) text = r?.notes?.[i] || '';
     res.className = `res ${tone}`;
     res.replaceChildren(...(tone ? [text] : figure(text)));
     res.hidden = !text;
@@ -242,6 +250,8 @@ function updateStepStatus() {
 stepsEl.addEventListener('click', (e) => {
   const b = e.target.closest('[data-act]');
   if (!b) return;
+  if (b.dataset.act === 'step-next') { $('step').click(); return; }
+  if (b.dataset.act === 'run-all') { state.stepPos = null; bake(state.steps.length); return; }
   const li = b.closest('.step');
   const i = [...stepsEl.children].indexOf(li);
   const s = state.steps[i];
