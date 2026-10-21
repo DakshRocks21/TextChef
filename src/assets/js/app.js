@@ -167,7 +167,8 @@ function optControl(step, opt) {
   const set = (val) => { step.opts[opt.id] = val; optionsChanged(); };
   const box = (control, cls = '') => el('div', { class: `opt box ${cls}` }, el('label', { for: id, text: opt.label }), control);
   if (opt.type === 'bool') {
-    return el('label', { class: 'opt check', for: id }, el('input', { type: 'checkbox', id, checked: !!v, onchange: (e) => set(e.target.checked) }), opt.label);
+    return el('label', { class: 'opt check', for: id }, el('span', { text: opt.label }),
+      el('input', { class: 'switch-in', type: 'checkbox', role: 'switch', id, checked: !!v, onchange: (e) => set(e.target.checked) }));
   }
   if (opt.type === 'select') {
     const sel = el('select', { class: 'bare', id, onchange: (e) => set(e.target.value) }, ...opt.choices.map(([val, label]) => el('option', { value: val, text: label })));
@@ -203,7 +204,10 @@ function renderSteps() {
           el('button', { class: 'btn icon', type: 'button', 'data-act': 'off', 'aria-pressed': String(s.off), 'aria-label': `Disable ${meta.name}`, title: s.off ? 'Enable step' : 'Disable step' }, icon('ban')),
           el('button', { class: 'btn icon', type: 'button', 'data-act': 'pause', 'aria-pressed': String(s.pause), 'aria-label': `Pause before ${meta.name}`, title: 'Pause here (breakpoint)' }, icon('pause')),
           el('button', { class: 'btn icon', type: 'button', 'data-act': 'remove', 'aria-label': `Remove ${meta.name}`, title: 'Remove step' }, icon('x')))),
-      hasOpts ? el('div', { class: 'opts', hidden: !!s.fold }, ...meta.options.map((o) => optControl(s, o))) : null);
+      hasOpts ? el('div', { class: 'opts', hidden: !!s.fold },
+        ...meta.options.filter((o) => o.type !== 'bool').map((o) => optControl(s, o)),
+        // On/off options share one card, a row each, so long labels never wrap into a grid cell.
+        meta.options.some((o) => o.type === 'bool') ? el('div', { class: 'checks' }, ...meta.options.filter((o) => o.type === 'bool').map((o) => optControl(s, o))) : null) : null);
     li.classList.toggle('off', s.off);
     li.classList.toggle('pause', s.pause);
     return li;
