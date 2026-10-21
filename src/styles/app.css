@@ -176,7 +176,7 @@
   .step.leaving { opacity: .35; filter: grayscale(1); }
   .step .acts [data-act="remove"] { display: none; }
   @media (pointer: coarse) { .step .acts [data-act="remove"] { display: inline-flex; } }
-  .step.pause { box-shadow: inset 4px 0 0 var(--warn); }
+  .step.pause { --c: var(--bad) !important; }
   .step.err { --c: var(--bad) !important; }
   .step.off { --c: #8b8b96 !important; }
   .step.off .title { text-decoration: line-through; text-decoration-thickness: 1px; }
@@ -188,13 +188,14 @@
   .step .res { min-width: 0; max-width: 100%; padding: 0 7px; border-radius: 5px; background: color-mix(in srgb, var(--c) 14%, var(--panel)); color: color-mix(in srgb, var(--c-ink) 80%, var(--muted)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
   .step .res b { color: var(--c-ink); font-weight: 650; }
   .step .res.bad { white-space: normal; }
-  .step .res.warn { background: var(--warn-soft); color: var(--warn); }
+  .step .res.warn { background: color-mix(in srgb, var(--bad) 14%, var(--panel)); color: var(--bad); }
   .step .res.next { background: var(--accent-soft); color: var(--accent); }
   .step .acts { display: flex; gap: 0; flex: none; }
-  .step .acts .btn { height: 30px; min-width: 30px; width: 30px; color: color-mix(in srgb, var(--c-ink) 55%, var(--muted)); }
-  .step .acts .btn:hover { background: color-mix(in srgb, var(--c) 16%, transparent); color: var(--c-ink); }
-  .step .acts .btn[aria-pressed="true"] { background: color-mix(in srgb, var(--c) 20%, transparent); color: var(--c-ink); }
-  .step .acts .btn[data-act="pause"][aria-pressed="true"] { color: var(--warn); background: var(--warn-soft); }
+  /* Quiet grey until used, like CyberChef: a disabled step's slash and a paused step's bars turn red. */
+  .step .acts .btn { height: 30px; min-width: 30px; width: 30px; color: color-mix(in srgb, var(--muted) 75%, transparent); }
+  .step .acts .btn:hover { background: color-mix(in srgb, var(--c) 14%, transparent); color: var(--ink); }
+  .step .acts .btn[aria-pressed="true"], .step .acts .btn[aria-pressed="true"]:hover { background: transparent; color: var(--bad); }
+  .step .acts [data-act="off"] svg { stroke-width: 2; }
   .step .acts [data-act="fold"] svg, #r-fold svg { transition: transform .15s; }
   .step .acts [data-act="fold"][aria-expanded="false"] svg, #r-fold[aria-pressed="true"] svg { transform: rotate(180deg); }
   .opts { display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 6px 10px; padding: 0 16px 14px; }
