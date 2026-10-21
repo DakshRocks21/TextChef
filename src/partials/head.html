@@ -1,0 +1,40 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{TITLE}}</title>
+<meta name="description" content="{{DESC}}">
+<link rel="canonical" href="{{CANONICAL}}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{SITE_NAME}}">
+<meta property="og:title" content="{{TITLE}}">
+<meta property="og:description" content="{{DESC}}">
+<meta property="og:url" content="{{CANONICAL}}">
+<meta property="og:image" content="{{SITE_URL}}icon-512.png">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#151518" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="{{BASE}}manifest.webmanifest">
+<link rel="icon" href="{{BASE}}icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="{{BASE}}icon-192.png">
+<link rel="preload" href="{{A}}fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{{A}}app.css">
+<script>
+(function () {
+  try {
+    var d = JSON.parse(localStorage.getItem('textchef'));
+    if (d && d.v === 1 && d.data && (d.data.theme === 'light' || d.data.theme === 'dark')) document.documentElement.dataset.theme = d.data.theme;
+  } catch (e) {}
+  // Self-heal: if boot fails while online, drop service workers and caches, then reload once per session.
+  var K = 'textchef-heal';
+  function heal() {
+    if (window.__tcBooted || !navigator.onLine) return;
+    try { if (sessionStorage.getItem(K)) return; sessionStorage.setItem(K, '1'); } catch (e) { return; }
+    var p = [];
+    if ('serviceWorker' in navigator) p.push(navigator.serviceWorker.getRegistrations().then(function (r) { return Promise.all(r.map(function (x) { return x.unregister(); })); }));
+    if (window.caches) p.push(caches.keys().then(function (k) { return Promise.all(k.map(function (x) { return caches.delete(x); })); }));
+    Promise.all(p).then(function () { location.reload(); }, function () { location.reload(); });
+  }
+  addEventListener('error', function () { if (!window.__tcBooted) heal(); }, true);
+  addEventListener('unhandledrejection', function () { if (!window.__tcBooted) heal(); });
+  setTimeout(heal, 15000);
+})();
+</script>

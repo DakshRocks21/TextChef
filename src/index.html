@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+{{> head}}
+{{PRELOADS}}
+</head>
+<body data-preload="{{PRELOAD}}">
+{{> sprite}}
+<div class="flex h-dvh flex-col">
+  <header class="topbar">
+    <a class="brand" href="{{BASE}}"><svg viewBox="0 0 32 32" aria-hidden="true"><use href="#logo"/></svg><span>{{SITE_NAME}}</span></a>
+    <button class="searchbtn" id="open-palette" type="button" aria-label="Search ops and actions" aria-keyshortcuts="Control+K Meta+K">
+      <svg class="i" aria-hidden="true"><use href="#i-search"/></svg><span class="flex-1 text-left">Search ops and actions</span><kbd>Ctrl K</kbd>
+    </button>
+    <div class="flex items-center gap-1">
+      <button class="btn soft" id="magic" type="button" title="Guess what the text is and suggest ops"><svg class="i" aria-hidden="true"><use href="#i-wand"/></svg><span class="hide-sm">Magic</span></button>
+      <div class="seg hide-sm" role="group" aria-label="Highlights">
+        <button class="btn icon" id="t-invis" type="button" aria-pressed="false" title="Show invisibles" aria-label="Show invisibles"><svg class="i" aria-hidden="true"><use href="#i-invis"/></svg></button>
+        <button class="btn icon" id="t-diff" type="button" aria-pressed="false" title="Highlight changes" aria-label="Highlight changes"><svg class="i" aria-hidden="true"><use href="#i-diff"/></svg></button>
+      </div>
+      <button class="btn icon" id="t-count" type="button" aria-pressed="false" title="Word counter" aria-label="Word counter"><svg class="i" aria-hidden="true"><use href="#i-hash"/></svg></button>
+      <button class="btn icon hide-sm" id="t-inspect" type="button" aria-pressed="false" title="Character inspector" aria-label="Character inspector"><svg class="i" aria-hidden="true"><use href="#i-info"/></svg></button>
+      <button class="btn icon hide-sm" id="t-speak" type="button" aria-pressed="false" title="Read aloud" aria-label="Read aloud"><svg class="i" aria-hidden="true"><use href="#i-speak"/></svg></button>
+      <span class="divider hide-sm"></span>
+      <button class="btn icon" id="t-theme" type="button" title="Theme" aria-label="Theme"><svg class="i" aria-hidden="true"><use href="#i-theme"/></svg></button>
+      <button class="btn icon" id="t-settings" type="button" title="Settings" aria-label="Settings"><svg class="i" aria-hidden="true"><use href="#i-gear"/></svg></button>
+      <span class="status hide-sm" id="offline"><i class="dot"></i><span>Loading</span></span>
+    </div>
+  </header>
+
+  <section class="intro {{INTRO_CLASS}}" id="intro">
+    <h1>{{H1}}</h1>
+    <p>{{LEDE}}</p>
+    {{INTRO_CLOSE}}
+  </section>
+
+  <main class="layout" id="layout">
+    <section class="card" id="p-ops" aria-labelledby="h-ops">
+      <div class="head"><h2 id="h-ops">Operations</h2></div>
+      <div class="opsearch">
+        <svg class="i" aria-hidden="true"><use href="#i-search"/></svg>
+        <label class="sr" for="op-search">Search operations</label>
+        <input class="field" type="search" id="op-search" placeholder="Filter ops" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="scroll"><ul class="cats" id="cats"></ul></div>
+    </section>
+
+    <div class="split" id="s1" role="separator" aria-orientation="vertical" aria-label="Resize operations pane" tabindex="0"></div>
+
+    <section class="card" id="p-recipe" aria-labelledby="h-recipe">
+      <div class="head">
+        <h2 id="h-recipe">Recipe</h2>
+        <button class="btn sm icon" id="r-fold" type="button" title="Collapse all steps" aria-label="Collapse all steps" aria-pressed="false"><svg class="i fold" aria-hidden="true"><use href="#i-chevron"/></svg></button>
+        <button class="btn sm icon" id="r-save" type="button" title="Save recipe" aria-label="Save recipe"><svg class="i" aria-hidden="true"><use href="#i-save"/></svg></button>
+        <button class="btn sm icon" id="r-load" type="button" title="Saved recipes" aria-label="Saved recipes"><svg class="i" aria-hidden="true"><use href="#i-book"/></svg></button>
+        <button class="btn sm icon" id="r-share" type="button" title="Share link" aria-label="Share link"><svg class="i" aria-hidden="true"><use href="#i-link"/></svg></button>
+        <button class="btn sm icon" id="r-clear" type="button" title="Clear recipe" aria-label="Clear recipe"><svg class="i" aria-hidden="true"><use href="#i-trash"/></svg></button>
+      </div>
+      <div class="scroll" id="r-scroll">
+        <ol class="steps" id="steps" aria-label="Recipe steps"></ol>
+        <div class="starters" id="starters" hidden>
+          <p>Start with a recipe, click a chip above the input, or drag an op here.</p>
+          <div class="grid" id="starter-list"></div>
+        </div>
+      </div>
+      <div class="bakebar">
+        <button class="btn line" id="step" type="button" title="Run one step at a time"><svg class="i" aria-hidden="true"><use href="#i-step"/></svg>Step</button>
+        <button class="btn primary" id="bake" type="button" aria-keyshortcuts="Control+Enter Meta+Enter"><svg class="i" aria-hidden="true"><use href="#i-play"/></svg>Bake<kbd class="hide-sm">Ctrl Enter</kbd></button>
+        <label class="switch" title="Bake as you type"><input type="checkbox" id="autobake" checked> Auto</label>
+      </div>
+    </section>
+
+    <div class="split" id="s2" role="separator" aria-orientation="vertical" aria-label="Resize recipe pane" tabindex="0"></div>
+
+    <section class="io show" id="p-text" aria-label="Input and output">
+      <div class="card box" id="in-box">
+        <div class="head">
+          <div class="label"><h2 class="sr" id="h-in">Input</h2><div class="tabs" id="tabs" role="group" aria-label="Input tabs"></div></div>
+          <div class="stats" id="in-stats" role="status" aria-live="polite"></div>
+          <div class="acts">
+            <button class="btn sm icon" id="in-open" type="button" title="Open file" aria-label="Open file"><svg class="i" aria-hidden="true"><use href="#i-open"/></svg></button>
+            <button class="btn sm icon" id="in-paste" type="button" title="Paste" aria-label="Paste"><svg class="i" aria-hidden="true"><use href="#i-paste"/></svg></button>
+            <button class="btn sm icon" id="in-copy" type="button" title="Copy input" aria-label="Copy input"><svg class="i" aria-hidden="true"><use href="#i-copy"/></svg></button>
+            <button class="btn sm icon" id="in-download" type="button" title="Download input" aria-label="Download input"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg></button>
+            <button class="btn sm icon" id="in-clear" type="button" title="Clear input" aria-label="Clear input"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></button>
+          </div>
+        </div>
+        <div class="chips" id="chips" aria-label="Problems found"></div>
+        <div class="bar" id="in-note" hidden></div>
+        <div class="editor">
+          <pre class="mirror" id="in-mirror" aria-hidden="true"></pre>
+          <textarea id="input" aria-labelledby="h-in" spellcheck="false" autocomplete="off" placeholder="Paste or type text here, or drop a file anywhere"></textarea>
+          <div class="drop-hint">Drop to open</div>
+        </div>
+      </div>
+
+      <div class="split h" id="s3" role="separator" aria-orientation="horizontal" aria-label="Resize input and output" tabindex="0"></div>
+
+      <div class="card box" id="out-box">
+        <div class="head">
+          <div class="label"><h2 id="h-out">Output</h2></div>
+          <div class="stats" id="out-stats" role="status" aria-live="polite"></div>
+          <div class="acts">
+            <button class="btn sm icon" id="out-move" type="button" title="Move output to input" aria-label="Move output to input"><svg class="i" aria-hidden="true"><use href="#i-up"/></svg></button>
+            <button class="btn sm icon" id="out-copy" type="button" title="Copy output (Ctrl Shift C)" aria-label="Copy output" aria-keyshortcuts="Control+Shift+C Meta+Shift+C"><svg class="i" aria-hidden="true"><use href="#i-copy"/></svg></button>
+            <button class="btn sm icon" id="out-save" type="button" title="Save back to file" aria-label="Save back to file" hidden><svg class="i" aria-hidden="true"><use href="#i-save"/></svg></button>
+            <button class="btn sm icon" id="out-download" type="button" title="Download output" aria-label="Download output"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg></button>
+            <button class="btn sm icon" id="out-clear" type="button" title="Clear input and recipe" aria-label="Clear input and recipe"><svg class="i" aria-hidden="true"><use href="#i-trash"/></svg></button>
+          </div>
+        </div>
+        <div class="bar" id="progress" hidden>
+          <span id="prog-text">Working</span>
+          <div class="meter"><i id="prog-bar"></i></div>
+          <button class="btn sm line" id="cancel" type="button">Cancel</button>
+        </div>
+        <div class="bar err" id="out-err" role="alert" hidden></div>
+        <div class="bar" id="out-note" hidden></div>
+        <div class="editor">
+          <pre class="mirror" id="out-mirror" aria-hidden="true"></pre>
+          <textarea id="output" aria-labelledby="h-out" readonly spellcheck="false"></textarea>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="mtabs" role="tablist" aria-label="Panels">
+    <button type="button" role="tab" data-p="p-text" aria-selected="true">Text</button>
+    <button type="button" role="tab" data-p="p-recipe" aria-selected="false">Recipe</button>
+    <button type="button" role="tab" data-p="p-ops" aria-selected="false">Ops</button>
+  </nav>
+</div>
+
+<dialog class="palette" id="palette" aria-label="Search ops and actions">
+  <div class="pin">
+    <svg class="i" aria-hidden="true"><use href="#i-search"/></svg>
+    <input type="text" id="pal-input" placeholder="Search ops, starters and actions" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="true" aria-controls="pal-list" aria-label="Search">
+  </div>
+  <ul id="pal-list" role="listbox" aria-label="Results"></ul>
+</dialog>
+
+<dialog class="dlg" id="dlg-save" aria-labelledby="h-save">
+  <form method="dialog">
+    <div class="head"><h2 id="h-save">Save recipe</h2></div>
+    <div class="body">
+      <label for="save-name">Name</label>
+      <input class="field" type="text" id="save-name" required maxlength="80" placeholder="My cleanup">
+    </div>
+    <div class="foot"><button class="btn line" value="cancel" formnovalidate>Cancel</button><button class="btn primary" value="ok">Save</button></div>
+  </form>
+</dialog>
+
+<dialog class="dlg" id="dlg-load" aria-labelledby="h-load">
+  <div class="head"><h2 id="h-load">Saved recipes</h2><button class="btn icon" type="button" data-close aria-label="Close"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></button></div>
+  <div class="body"><ul class="list" id="saved-list"></ul></div>
+  <div class="foot">
+    <button class="btn line" type="button" id="rec-import">Import JSON</button>
+    <button class="btn line" type="button" id="rec-export">Export JSON</button>
+    <input type="file" id="rec-file" accept=".json,application/json" hidden>
+  </div>
+</dialog>
+
+<dialog class="dlg" id="dlg-share" aria-labelledby="h-share">
+  <div class="head"><h2 id="h-share">Share recipe</h2><button class="btn icon" type="button" data-close aria-label="Close"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></button></div>
+  <div class="body">
+    <label for="share-url">Link</label>
+    <input class="field" type="text" id="share-url" readonly>
+    <label class="check"><input type="checkbox" id="share-input"> Include input</label>
+    <p class="hint" id="share-warn" style="color:var(--warn)" hidden>Your input text goes into the link. Anyone with it can read the text.</p>
+  </div>
+  <div class="foot"><button class="btn primary" type="button" id="share-copy">Copy link</button></div>
+</dialog>
+
+<dialog class="dlg" id="dlg-settings" aria-labelledby="h-settings">
+  <div class="head"><h2 id="h-settings">Settings</h2><button class="btn icon" type="button" data-close aria-label="Close"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></button></div>
+  <div class="body">
+    <label class="check"><input type="checkbox" id="set-remember"> Remember my last input on this device</label>
+    <label for="set-theme">Theme</label>
+    <select class="field" id="set-theme"><option value="system">Follow system</option><option value="light">Light</option><option value="dark">Dark</option></select>
+    <p class="hint">Your text stays in this browser. Nothing is sent anywhere.</p>
+    <p class="hint"><kbd>Ctrl K</kbd> search &nbsp; <kbd>Ctrl Enter</kbd> bake &nbsp; <kbd>Ctrl Shift C</kbd> copy output &nbsp; <kbd>Esc</kbd> close</p>
+    <p class="hint">Something stuck? <a href="{{BASE}}reset/">Reset the app</a>.</p>
+  </div>
+</dialog>
+
+<div class="pop" id="magic-pop" hidden role="dialog" aria-labelledby="h-magic">
+  <div class="head"><h2 id="h-magic">Magic</h2><button class="btn sm icon" type="button" data-close aria-label="Close"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></button></div>
+  <div class="body" id="magic-body"></div>
+</div>
+
+<aside class="side" id="side-count" hidden aria-labelledby="h-count">
+  <div class="head"><h2 id="h-count">Word counter</h2><button class="btn icon" type="button" data-close aria-label="Close"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></button></div>
+  <div class="scroll pad">{{> counter}}</div>
+</aside>
+
+<aside class="side inspect" id="side-inspect" hidden aria-labelledby="h-inspect">
+  <div class="head"><h2 id="h-inspect">Character inspector</h2><button class="btn icon" type="button" data-close aria-label="Close"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></button></div>
+  <div class="scroll pad" id="inspect-body"></div>
+</aside>
+
+<aside class="side" id="side-speak" hidden aria-labelledby="h-speak">
+  <div class="head"><h2 id="h-speak">Read aloud</h2><button class="btn icon" type="button" data-close aria-label="Close"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></button></div>
+  <div class="pad">
+    <label for="sp-src">Read</label>
+    <select class="field" id="sp-src"><option value="output">Output</option><option value="input">Input</option></select>
+    <label for="sp-voice">Voice</label>
+    <select class="field" id="sp-voice"></select>
+    <label for="sp-rate">Speed <output id="sp-rate-v">1</output></label>
+    <input type="range" id="sp-rate" min="0.5" max="2" step="0.1" value="1">
+    <div class="flex gap-2"><button class="btn primary" type="button" id="sp-play">Play</button><button class="btn line" type="button" id="sp-stop">Stop</button></div>
+    <p class="hint" id="sp-note">Uses voices installed on your device. Works offline when your system has local voices.</p>
+  </div>
+</aside>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<input type="file" id="file-input" multiple hidden>
+<script type="module" src="{{A}}js/app.js"></script>
+</body>
+</html>

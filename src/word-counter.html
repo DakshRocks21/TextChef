@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+{{> head}}
+{{PRELOADS}}
+</head>
+<body>
+{{> sprite}}
+<header class="topbar mx-auto max-w-4xl">
+  <a class="brand" href="{{BASE}}"><svg viewBox="0 0 32 32" aria-hidden="true"><use href="#logo"/></svg><span>{{SITE_NAME}}</span></a>
+  <span class="flex-1"></span>
+  <a class="btn line" href="{{BASE}}">Open the workbench</a>
+  <button class="btn icon" id="t-theme" type="button" title="Theme" aria-label="Theme"><svg class="i" aria-hidden="true"><use href="#i-theme"/></svg></button>
+  <span class="status hide-sm" id="offline"><i class="dot"></i><span>Loading</span></span>
+</header>
+<main class="mx-auto grid max-w-4xl gap-5 px-4 pt-6 pb-12">
+  <div class="grid gap-2">
+    <h1 class="text-3xl font-semibold tracking-tight">{{H1}}</h1>
+    <p class="max-w-2xl text-[15px] text-muted">{{LEDE}}</p>
+  </div>
+  <label class="sr" for="wc-text">Your text</label>
+  <textarea id="wc-text" class="min-h-72 w-full resize-y rounded-2xl border border-line bg-panel p-5 text-base leading-relaxed shadow-sm outline-none transition focus:border-accent focus:ring-4 focus:ring-accent-soft" placeholder="Paste or start typing" autofocus></textarea>
+  {{> counter}}
+  <footer class="hint">Words are counted the way your browser splits them, so Chinese and Japanese work too. Reading time assumes 238 words a minute and speaking time 150.</footer>
+</main>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<script type="module" src="{{A}}js/wc.js"></script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<div class="wc" id="wc">
+  <div class="wc-grid">
+    <div class="stat hero"><b data-k="words">0</b><span>Words</span></div>
+    <div class="stat hero"><b data-k="chars">0</b><span>Characters</span></div>
+    <div class="stat"><b data-k="charsNoSpaces">0</b><span>Characters without spaces</span></div>
+    <div class="stat"><b data-k="sentences">0</b><span>Sentences</span></div>
+    <div class="stat"><b data-k="paragraphs">0</b><span>Paragraphs</span></div>
+    <div class="stat"><b data-k="lines">0</b><span>Lines</span></div>
+    <div class="stat"><b data-k="reading">0 sec</b><span>Reading time</span></div>
+    <div class="stat"><b data-k="speaking">0 sec</b><span>Speaking time</span></div>
+    <div class="stat"><b data-k="avgWord">0</b><span>Average word length</span></div>
+    <div class="stat"><b data-k="longest">None</b><span>Longest word</span></div>
+    <div class="stat"><b data-k="flesch">0</b><span data-k="fleschLabel">Reading ease</span></div>
+    <div class="stat"><b data-k="grade">0</b><span>Grade level</span></div>
+  </div>
+  <p class="sr" aria-live="polite" data-k="summary"></p>
+  <div class="wc-limit" data-limit>
+    <label for="wc-preset">Limit</label>
+    <select class="field" id="wc-preset">
+      <option value="">None</option>
+      <option value="words:150">150 words</option>
+      <option value="words:250">250 words</option>
+      <option value="words:500">500 words</option>
+      <option value="words:650">650 words</option>
+      <option value="words:1000">1000 words</option>
+      <option value="chars:280">280 characters</option>
+      <option value="custom">Custom</option>
+    </select>
+    <span class="flex items-center gap-2" data-custom hidden>
+      <label class="sr" for="wc-custom">Custom limit</label>
+      <input class="field" type="number" id="wc-custom" min="1" max="1000000" value="300">
+      <label class="sr" for="wc-kind">Count</label>
+      <select class="field" id="wc-kind"><option value="words">words</option><option value="chars">characters</option></select>
+    </span>
+    <span class="count" data-k="limit"></span>
+    <div class="meter" role="progressbar" aria-label="Limit used" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div>
+  </div>
+  <div class="wc-keys">
+    <div class="h"><h2>Top keywords</h2><label><input type="checkbox" id="wc-stop" checked> Skip common words</label></div>
+    <ol data-k="keys"></ol>
+  </div>
+</div>
