@@ -15,10 +15,6 @@
     </button>
     <div class="flex items-center gap-1">
       <button class="btn soft" id="magic" type="button" title="Guess what the text is and suggest ops"><svg class="i" aria-hidden="true"><use href="#i-wand"/></svg><span class="hide-sm">Magic</span></button>
-      <div class="seg hide-sm" role="group" aria-label="Highlights">
-        <button class="btn icon" id="t-invis" type="button" aria-pressed="false" title="Show invisibles" aria-label="Show invisibles"><svg class="i" aria-hidden="true"><use href="#i-invis"/></svg></button>
-        <button class="btn icon" id="t-diff" type="button" aria-pressed="false" title="Highlight changes" aria-label="Highlight changes"><svg class="i" aria-hidden="true"><use href="#i-diff"/></svg></button>
-      </div>
       <button class="btn icon" id="t-count" type="button" aria-pressed="false" title="Word counter" aria-label="Word counter"><svg class="i" aria-hidden="true"><use href="#i-hash"/></svg></button>
       <button class="btn icon hide-sm" id="t-inspect" type="button" aria-pressed="false" title="Character inspector" aria-label="Character inspector"><svg class="i" aria-hidden="true"><use href="#i-info"/></svg></button>
       <button class="btn icon hide-sm" id="t-speak" type="button" aria-pressed="false" title="Read aloud" aria-label="Read aloud"><svg class="i" aria-hidden="true"><use href="#i-speak"/></svg></button>
@@ -78,6 +74,7 @@
         <div class="head">
           <div class="label"><h2 class="sr" id="h-in">Input</h2><div class="tabs" id="tabs" role="group" aria-label="Input tabs"></div></div>
           <div class="stats" id="in-stats" role="status" aria-live="polite"></div>
+          <button class="pill-toggle" id="t-invis" type="button" aria-pressed="false" title="Show spaces, tabs, line endings and hidden characters"><svg class="i" aria-hidden="true"><use href="#i-invis"/></svg><span>Invisibles</span></button>
           <div class="acts">
             <button class="btn sm icon" id="in-open" type="button" title="Open file" aria-label="Open file"><svg class="i" aria-hidden="true"><use href="#i-open"/></svg></button>
             <button class="btn sm icon" id="in-paste" type="button" title="Paste" aria-label="Paste"><svg class="i" aria-hidden="true"><use href="#i-paste"/></svg></button>
@@ -101,6 +98,7 @@
         <div class="head">
           <div class="label"><h2 id="h-out">Output</h2></div>
           <div class="stats" id="out-stats" role="status" aria-live="polite"></div>
+          <button class="pill-toggle" id="t-diff" type="button" aria-pressed="false" title="Highlight what the recipe changed, in both boxes"><svg class="i" aria-hidden="true"><use href="#i-diff"/></svg><span>Changes</span></button>
           <div class="acts">
             <button class="btn sm icon" id="out-move" type="button" title="Move output to input" aria-label="Move output to input"><svg class="i" aria-hidden="true"><use href="#i-up"/></svg></button>
             <button class="btn sm icon" id="out-copy" type="button" title="Copy output (Ctrl Shift C)" aria-label="Copy output" aria-keyshortcuts="Control+Shift+C Meta+Shift+C"><svg class="i" aria-hidden="true"><use href="#i-copy"/></svg></button>

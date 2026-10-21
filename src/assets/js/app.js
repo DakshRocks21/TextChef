@@ -833,7 +833,8 @@ function refreshMirrors() {
 }
 const refreshMirrorsSoon = debounce(refreshMirrors, 150);
 
-function toggle(btnId, key, label) {
+// The pill shows its own state, so no toast.
+function toggle(btnId, key) {
   const b = $(btnId);
   const sync = () => b.setAttribute('aria-pressed', String(!!store.get(key)));
   sync();
@@ -841,11 +842,10 @@ function toggle(btnId, key, label) {
     store.set(key, !store.get(key));
     sync();
     refreshMirrors();
-    toast(`${label} ${store.get(key) ? 'on' : 'off'}`);
   });
 }
-toggle('t-invis', 'invisibles', 'Invisibles');
-toggle('t-diff', 'diff', 'Diff');
+toggle('t-invis', 'invisibles');
+toggle('t-diff', 'diff');
 
 // ---------- URL hash ----------
 function writeHash() {

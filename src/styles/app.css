@@ -120,9 +120,6 @@
   .brand svg { width: 26px; height: 26px; }
   .searchbtn { display: flex; align-items: center; gap: 8px; height: 34px; width: 100%; max-width: 420px; margin: 0 auto; padding: 0 6px 0 11px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--muted); box-shadow: var(--shadow-sm); cursor: pointer; transition: border-color .12s; }
   .searchbtn:hover { border-color: var(--line-2); color: var(--ink); }
-  .seg { display: flex; padding: 2px; gap: 2px; border-radius: 10px; background: var(--hover); }
-  .seg .btn { height: 28px; min-width: 28px; width: 30px; }
-  .seg .btn[aria-pressed="true"] { background: var(--panel); color: var(--accent); box-shadow: var(--shadow-sm); }
   .status { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 8px; border-radius: 99px; color: var(--muted); font-size: 12px; white-space: nowrap; }
   @media (max-width: 1180px) { .status span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } }
   .status .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--faint); }
@@ -253,6 +250,11 @@
   .stats b { color: var(--ink); font-weight: 600; }
   .stats .delta { color: var(--good); font-weight: 500; }
   .acts { display: flex; align-items: center; gap: 0; flex: none; }
+  .pill-toggle { display: inline-flex; align-items: center; gap: 6px; flex: none; height: 28px; padding: 0 11px 0 9px; margin-right: 4px; border-radius: 99px; border: 1px solid var(--line); background: var(--panel); color: var(--muted); font-size: 12px; font-weight: 500; cursor: pointer; transition: background-color .12s, color .12s, border-color .12s; }
+  .pill-toggle svg { width: 15px; height: 15px; }
+  .pill-toggle:hover { border-color: var(--line-2); color: var(--ink); }
+  .pill-toggle[aria-pressed="true"] { background: var(--accent-soft); border-color: transparent; color: var(--accent); }
+  @container (max-width: 560px) { .pill-toggle { width: 28px; padding: 0; justify-content: center; } .pill-toggle span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } }
   @container (max-width: 520px) { .stats span:nth-child(n+3) { display: none; } }
   @container (max-width: 400px) { .stats { display: none; } }
   .chips { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px 12px; border-bottom: 1px solid var(--line); background: var(--panel-2); }
