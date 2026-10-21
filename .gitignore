@@ -1,0 +1,7 @@
+dist/
+tools/tailwindcss
+tools/tailwindcss.exe
+node_modules/
+.claude/
+.playwright-mcp/
+.DS_Store
