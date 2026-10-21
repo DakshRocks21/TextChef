@@ -74,6 +74,7 @@ The rest of this page is technical.
 - **Small and lazy.** The core shell is about 46 KB gzipped, plus 78 KB of self-hosted fonts (Inter and JetBrains Mono from Google Fonts). The 133 operations live in 9 category modules that load on first use and are precached for offline.
 - **Built for big files.** A 100 MB file opens in under half a second. Recipes bake in a worker while the page stays responsive. See [Big files](#big-files).
 - **Offline-first.** A content-hashed service worker serves every page and asset cache-first. After the first load the app makes zero network requests.
+- **Responsive.** Wide screens get three panes. Tablets and small laptops get two, with Operations as a slide-out drawer. Phones get Text, Recipe and Ops tabs.
 - **Tested.** Every operation is tested against empty input, CRLF, emoji, NBSP, zero-width characters and a 1 MB input.
 
 ### Contents

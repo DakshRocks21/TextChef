@@ -194,7 +194,7 @@ function renderSteps() {
     const cat = catById.get(meta.cat);
     const name = `Step ${i + 1}, ${meta.name}`;
     const hasOpts = (meta.options || []).length > 0;
-    const li = el('li', { class: 'step', 'data-key': String(s.key), style: `--c:${cat.color}`, tabindex: '0', 'aria-label': name, 'aria-keyshortcuts': 'Delete Alt+ArrowUp Alt+ArrowDown' },
+    const li = el('li', { class: 'step', 'data-key': String(s.key), tabindex: '0', 'aria-label': name, 'aria-keyshortcuts': 'Delete Alt+ArrowUp Alt+ArrowDown' },
       el('div', { class: 'row', draggable: 'true', title: `${cat.name}. Drag to reorder, or drag out of the recipe to remove.` },
         el('div', { class: 'meta' },
           el('span', { class: 'title', text: meta.name }),
@@ -1193,6 +1193,7 @@ addEventListener('keydown', (e) => {
   else if (mod && e.key === 'Enter') { e.preventDefault(); state.stepPos = null; bake(); }
   else if (mod && e.shiftKey && e.key.toLowerCase() === 'c') { e.preventDefault(); copyText(outputText, 'Output'); }
   else if (e.key === 'Escape') {
+    if (document.body.classList.contains('ops-open')) { setOpsDrawer(false); opsBtn.focus(); return; }
     if (!$('magic-pop').hidden) { $('magic-pop').hidden = true; $('magic').focus(); return; }
     const side = [...document.querySelectorAll('.side')].find((s) => !s.hidden);
     if (side && !document.querySelector('dialog[open]')) closePanel(side);
@@ -1200,8 +1201,15 @@ addEventListener('keydown', (e) => {
 });
 
 // ---------- Panes: resizing and mobile tabs ----------
+// Saved pane widths are a preference: they are clamped to fit the window when applied, not overwritten.
+const drawerMode = matchMedia('(min-width: 761px) and (max-width: 1100px)');
+function fitCols([c1, c2]) {
+  const w = layout.clientWidth - 16;
+  const side = drawerMode.matches ? 0 : Math.max(200, Math.min(c1, w * 0.3));
+  return [Math.round(side || c1), Math.round(Math.max(260, Math.min(c2, w - side - 360)))];
+}
 function applyCols() {
-  const [c1, c2] = store.get('cols');
+  const [c1, c2] = fitCols(store.get('cols'));
   layout.style.setProperty('--c1', `${c1}px`);
   layout.style.setProperty('--c2', `${c2}px`);
   const r = store.get('ioSplit');
@@ -1228,23 +1236,31 @@ function splitter(id, onMove) {
     if (d) { e.preventDefault(); onMove(null, d); }
   });
 }
-const clampCols = (c1, c2) => {
-  const w = layout.clientWidth;
-  c1 = Math.max(180, Math.min(c1, w * 0.4));
-  c2 = Math.max(240, Math.min(c2, w - c1 - 320));
-  return [Math.round(c1), Math.round(c2)];
-};
 splitter('s1', (e, d) => {
-  const [c1, c2] = store.get('cols');
-  const left = layout.getBoundingClientRect().left;
-  store.set('cols', clampCols(e ? e.clientX - left : c1 + d, c2));
+  const [c1, c2] = fitCols(store.get('cols'));
+  const left = $('p-ops').getBoundingClientRect().left;
+  store.set('cols', fitCols([e ? e.clientX - left : c1 + d, c2]));
   applyCols();
 });
 splitter('s2', (e, d) => {
-  const [c1, c2] = store.get('cols');
-  const left = layout.getBoundingClientRect().left;
-  store.set('cols', clampCols(c1, e ? e.clientX - left - c1 - 5 : c2 + d));
+  const [c1, c2] = fitCols(store.get('cols'));
+  const left = $('p-recipe').getBoundingClientRect().left;
+  store.set('cols', fitCols([c1, e ? e.clientX - left : c2 + d]));
   applyCols();
+});
+addEventListener('resize', debounce(applyCols, 80));
+
+// Medium widths: Operations slides in as a drawer instead of taking a column.
+const opsBtn = $('t-ops');
+function setOpsDrawer(open) {
+  document.body.classList.toggle('ops-open', open);
+  opsBtn.setAttribute('aria-expanded', String(open));
+  if (open) $('op-search').focus();
+}
+opsBtn.addEventListener('click', () => setOpsDrawer(!document.body.classList.contains('ops-open')));
+drawerMode.addEventListener('change', () => { setOpsDrawer(false); applyCols(); });
+document.addEventListener('pointerdown', (e) => {
+  if (document.body.classList.contains('ops-open') && !$('p-ops').contains(e.target) && !opsBtn.contains(e.target)) setOpsDrawer(false);
 });
 splitter('s3', (e, d) => {
   const box = $('p-text').getBoundingClientRect();

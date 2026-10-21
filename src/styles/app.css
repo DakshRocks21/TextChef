@@ -105,7 +105,7 @@
   .btn.primary { background: var(--accent); color: var(--accent-ink); font-weight: 600; box-shadow: var(--shadow-sm); }
   .btn.primary:hover { filter: brightness(1.07); color: var(--accent-ink); background: var(--accent); }
   .btn.primary kbd { background: transparent; color: inherit; opacity: .75; border-color: color-mix(in srgb, currentColor 35%, transparent); }
-  .btn[aria-pressed="true"] { color: var(--accent); background: var(--accent-soft); }
+  .btn[aria-pressed="true"], .btn[aria-expanded="true"].only-md { color: var(--accent); background: var(--accent-soft); }
   .btn:disabled { opacity: .45; pointer-events: none; }
   .divider { width: 1px; height: 20px; background: var(--line); margin: 0 4px; flex: none; }
   .field { height: 32px; width: 100%; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); padding: 0 10px; color: var(--ink); transition: border-color .12s, box-shadow .12s; }
@@ -166,10 +166,10 @@
   .empty-note { padding: 16px 12px; color: var(--muted); }
 
   /* Recipe */
-  /* Steps are flush blocks tinted with their category colour, like CyberChef. */
+  /* Steps are flush blocks in one shared tint, like CyberChef. Category colour stays in the ops list. */
   .steps { display: flex; flex-direction: column; min-height: 100%; }
   .drop .steps, .drop .starters { background: color-mix(in srgb, var(--accent-soft) 60%, transparent); }
-  .step { --c-ink: color-mix(in srgb, var(--c) 66%, var(--tint)); background: color-mix(in srgb, var(--c) var(--wash), var(--panel)); border-bottom: 1px solid color-mix(in srgb, var(--c) 20%, var(--line)); }
+  .step { --c: var(--accent); --c-ink: color-mix(in srgb, var(--c) 66%, var(--tint)); background: color-mix(in srgb, var(--c) var(--wash), var(--panel)); border-bottom: 1px solid color-mix(in srgb, var(--c) 20%, var(--line)); }
   .step:focus-visible { outline-offset: -2px; border-radius: 0; }
   .step.over { box-shadow: inset 0 3px 0 var(--accent); }
   .step.dragging { opacity: .4; }
@@ -354,6 +354,25 @@
 
   /* Mobile tabs */
   .mtabs { display: none; }
+  .only-md { display: none; }
+}
+
+/* Medium widths (tablets, small laptops, split windows): two columns and an Operations drawer. */
+@media (min-width: 761px) and (max-width: 1100px) {
+  .layout { grid-template-columns: var(--c2, 320px) 8px minmax(0, 1fr); }
+  .layout > #s1 { display: none; }
+  .only-md { display: inline-flex; }
+  #p-ops { position: fixed; z-index: 16; top: 56px; left: 8px; bottom: 8px; width: min(320px, calc(100vw - 16px)); box-shadow: var(--shadow-lg); transform: translateX(calc(-100% - 16px)); visibility: hidden; transition: transform .2s ease, visibility 0s .2s; }
+  body.ops-open #p-ops { transform: none; visibility: visible; transition: transform .2s ease; }
+  .topbar { gap: 8px; }
+}
+@media (min-width: 761px) and (max-width: 900px) {
+  #t-inspect, #t-speak, .topbar .divider { display: none; }
+}
+
+/* Touch screens: 16px text in fields so iOS does not zoom in on focus. */
+@media (pointer: coarse) {
+  .editor > textarea, .editor > .mirror, .field, .opt.box .bare, #pal-input, #wc-text { font-size: 16px; }
 }
 
 @keyframes rise { from { opacity: 0; transform: translateY(6px); } }
