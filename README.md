@@ -50,7 +50,7 @@ It is inspired by [CyberChef](https://github.com/gchq/CyberChef), the "Cyber Swi
 2. **Click a yellow chip** above the text to fix a problem, or pick a starter like *Clean pasted text*.
 3. **Copy or download** the result from the output box.
 
-That's it. Want more? Search for any operation with <kbd>Ctrl</kbd> <kbd>K</kbd>, chain several into a recipe, and save it or share it as a link.
+That's it. Want more? Search for any operation with <kbd>Ctrl</kbd> <kbd>K</kbd>, chain several into a recipe, and save it or share it as a link. Drag steps to reorder them, and drag a step out of the recipe to remove it.
 
 ## Is my text private?
 
@@ -242,6 +242,7 @@ All paths are relative, so project sites under `/repo-name/` work.
 | <kbd>Esc</kbd> | Close panels and popovers |
 | <kbd>Enter</kbd> on an operation | Add it to the recipe |
 | <kbd>Alt</kbd> <kbd>Up</kbd> / <kbd>Down</kbd> on a step | Move the step |
+| <kbd>Delete</kbd> on a step | Remove the step (or drag it out of the recipe) |
 | Arrow keys on a pane divider | Resize panes |
 
 On a Mac, use <kbd>Cmd</kbd> instead of <kbd>Ctrl</kbd>.

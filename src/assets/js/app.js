@@ -193,8 +193,8 @@ function renderSteps() {
     const cat = catById.get(meta.cat);
     const name = `Step ${i + 1}, ${meta.name}`;
     const hasOpts = (meta.options || []).length > 0;
-    const li = el('li', { class: 'step', 'data-key': String(s.key), style: `--c:${cat.color}`, tabindex: '-1', 'aria-label': name },
-      el('div', { class: 'row', draggable: 'true', title: `${cat.name}. Drag to reorder, or use Alt plus arrow keys.` },
+    const li = el('li', { class: 'step', 'data-key': String(s.key), style: `--c:${cat.color}`, tabindex: '0', 'aria-label': name, 'aria-keyshortcuts': 'Delete Alt+ArrowUp Alt+ArrowDown' },
+      el('div', { class: 'row', draggable: 'true', title: `${cat.name}. Drag to reorder, or drag out of the recipe to remove.` },
         el('div', { class: 'meta' },
           el('span', { class: 'title', text: meta.name }),
           el('span', { class: 'sub', hidden: true }, el('span', { class: 'res', 'aria-live': 'polite' }))),
@@ -249,14 +249,29 @@ stepsEl.addEventListener('click', (e) => {
     syncFoldAll();
     return;
   }
-  if (b.dataset.act === 'remove') state.steps.splice(i, 1);
+  if (b.dataset.act === 'remove') { removeStep(i); return; }
   if (b.dataset.act === 'off') s.off = !s.off;
   if (b.dataset.act === 'pause') s.pause = !s.pause;
   recipeChanged();
   const again = stepsEl.children[Math.min(i, stepsEl.children.length - 1)];
   (again?.querySelector(`[data-act="${b.dataset.act}"]`) || again)?.focus();
 });
+// Remove a step, with Undo. Steps leave by being dragged out of the recipe, the Delete key,
+// or the X that only touch screens show.
+function removeStep(i) {
+  const [s] = state.steps.splice(i, 1);
+  if (!s) return;
+  recipeChanged();
+  (stepsEl.children[Math.min(i, stepsEl.children.length - 1)] || $('r-scroll'))?.focus?.();
+  toast(`Removed ${byId.get(s.id).name}`, { action: 'Undo', onAction: () => { state.steps.splice(i, 0, s); recipeChanged(); } });
+}
+
 stepsEl.addEventListener('keydown', (e) => {
+  if ((e.key === 'Delete' || e.key === 'Backspace') && e.target.classList.contains('step')) {
+    e.preventDefault();
+    removeStep([...stepsEl.children].indexOf(e.target));
+    return;
+  }
   const li = e.target.closest('.step');
   if (!li || !e.altKey || (e.key !== 'ArrowUp' && e.key !== 'ArrowDown')) return;
   e.preventDefault();
@@ -293,7 +308,23 @@ stepsEl.addEventListener('dragstart', (e) => {
   e.dataTransfer.setDragImage(li, 20, 16);
   li.classList.add('dragging');
 });
-stepsEl.addEventListener('dragend', () => { dragKey = null; stepsEl.querySelectorAll('.dragging,.over').forEach((x) => x.classList.remove('dragging', 'over')); });
+stepsEl.addEventListener('dragend', () => {
+  dragKey = null;
+  stepsEl.querySelectorAll('.dragging,.over,.leaving').forEach((x) => x.classList.remove('dragging', 'over', 'leaving'));
+});
+// Dragging a step out of the recipe and dropping it anywhere else removes it. Esc still cancels.
+const leaving = (on) => stepsEl.querySelector('.dragging')?.classList.toggle('leaving', on);
+document.addEventListener('dragover', (e) => {
+  if (dragKey == null || recipeDropZone.contains(e.target)) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  leaving(true);
+});
+document.addEventListener('drop', (e) => {
+  if (dragKey == null || recipeDropZone.contains(e.target)) return;
+  e.preventDefault();
+  removeStep(state.steps.findIndex((s) => s.key === dragKey));
+});
 const recipeDropZone = $('r-scroll');
 const dropIndex = (e) => {
   const items = [...stepsEl.children];
@@ -308,6 +339,7 @@ recipeDropZone.addEventListener('dragover', (e) => {
   if (!types.includes('text/x-op') && !types.includes('text/x-step')) return;
   e.preventDefault();
   e.dataTransfer.dropEffect = types.includes('text/x-op') ? 'copy' : 'move';
+  leaving(false);
   stepsEl.querySelectorAll('.over').forEach((x) => x.classList.remove('over'));
   stepsEl.children[dropIndex(e)]?.classList.add('over');
   recipeDropZone.classList.add('drop');
@@ -320,7 +352,10 @@ recipeDropZone.addEventListener('drop', (e) => {
   if (opId) { e.preventDefault(); addStep(opId, {}, at); return; }
   if (dragKey != null) {
     e.preventDefault();
+    // Handled here: the re-render below detaches the target, so the page-level drop must not see it.
+    e.stopPropagation();
     const from = state.steps.findIndex((s) => s.key === dragKey);
+    dragKey = null;
     const [s] = state.steps.splice(from, 1);
     state.steps.splice(at > from ? at - 1 : at, 0, s);
     recipeChanged();

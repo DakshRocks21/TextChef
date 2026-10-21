@@ -173,6 +173,9 @@
   .step:focus-visible { outline-offset: -2px; border-radius: 0; }
   .step.over { box-shadow: inset 0 3px 0 var(--accent); }
   .step.dragging { opacity: .4; }
+  .step.leaving { opacity: .35; filter: grayscale(1); }
+  .step .acts [data-act="remove"] { display: none; }
+  @media (pointer: coarse) { .step .acts [data-act="remove"] { display: inline-flex; } }
   .step.pause { box-shadow: inset 4px 0 0 var(--warn); }
   .step.err { --c: var(--bad) !important; }
   .step.off { --c: #8b8b96 !important; }
